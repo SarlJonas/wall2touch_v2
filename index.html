@@ -1,0 +1,3280 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MurTactile – Le mur interactif gestuel et tactile | Wall2Touch</title>
+    <meta name="description" content="Une expérience éducative, ludique et immersive contrôlée par les mains, sans contact. Concept développé par GAUTIER HAYET - SARL Jonas Browser High-Tech">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Quicksand:wght@300;400;500;600;700&family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #0a1628;
+            --secondary-blue: #1a2d4a;
+            --accent-cyan: #00d4ff;
+            --accent-green: #00ff88;
+            --accent-red: #ff3366;
+            --accent-yellow: #ffcc00;
+            --accent-purple: #8844ff;
+            --accent-orange: #ff6600;
+            --accent-pink: #ff66cc;
+            --glow-cyan: 0 0 30px rgba(0, 212, 255, 0.6);
+            --glow-green: 0 0 30px rgba(0, 255, 136, 0.6);
+            --glow-red: 0 0 20px rgba(255, 51, 102, 0.5);
+            --glow-yellow: 0 0 20px rgba(255, 204, 0, 0.5);
+            --text-light: #ffffff;
+            --text-muted: #a0b4c8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #0f2744 30%, #1a3a5c 60%, var(--secondary-blue) 100%);
+            min-height: 100vh;
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Stars */
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Logo Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to bottom, rgba(10, 22, 40, 0.95), transparent);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            height: 50px;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
+        }
+
+        .logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .company-badge {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
+            color: var(--accent-cyan);
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 5px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Main Hero Section */
+        #mur-hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding-top: 80px;
+        }
+
+        .hero-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            padding: 20px 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Theme Buttons Column */
+        .themes-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .theme-btn {
+            position: relative;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 25px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .theme-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .theme-btn:hover::before {
+            left: 100%;
+        }
+
+        .theme-btn.educatif {
+            background: linear-gradient(135deg, #ff3366, #ff6b8a);
+            color: white;
+            box-shadow: var(--glow-red);
+        }
+
+        .theme-btn.jeux {
+            background: linear-gradient(135deg, #3366ff, #668aff);
+            color: white;
+            box-shadow: 0 0 20px rgba(51, 102, 255, 0.5);
+        }
+
+        .theme-btn.vr {
+            background: linear-gradient(135deg, #ffcc00, #ffdd44);
+            color: #1a2d4a;
+            box-shadow: var(--glow-yellow);
+        }
+
+        .theme-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        .theme-btn.active {
+            outline: 3px solid white;
+            outline-offset: 3px;
+        }
+
+        /* Concept Buttons */
+        .concepts-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .concept-btn {
+            padding: 12px 20px;
+            border: 2px solid var(--accent-green);
+            border-radius: 20px;
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--accent-green);
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .concept-btn:hover {
+            background: var(--accent-green);
+            color: var(--primary-blue);
+            box-shadow: var(--glow-green);
+        }
+
+        /* Age Selection */
+        .age-container {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .age-btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #00cc66, #00ff88);
+            color: var(--primary-blue);
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--glow-green);
+        }
+
+        .age-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .age-btn.active {
+            outline: 3px solid white;
+            outline-offset: 3px;
+        }
+
+        /* Robot Center Column */
+        .robot-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .robot-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .robot-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse-glow 3s infinite ease-in-out;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+        }
+
+        .robot-img {
+            width: 220px;
+            height: auto;
+            position: relative;
+            z-index: 2;
+            filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.5));
+            animation: float 4s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .speech-bubble {
+            position: relative;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--primary-blue);
+            padding: 15px 20px;
+            border-radius: 20px;
+            max-width: 280px;
+            text-align: center;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 15px 15px 0;
+            border-style: solid;
+            border-color: rgba(255, 255, 255, 0.95) transparent transparent;
+        }
+
+        .speech-bubble .robot-name {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* START Button */
+        .start-btn-container {
+            margin-top: 30px;
+        }
+
+        .start-btn {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid var(--accent-green);
+            background: linear-gradient(145deg, #1a3a5c, #0f2744);
+            color: var(--accent-green);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.4), inset 0 0 30px rgba(0, 255, 136, 0.1);
+        }
+
+        .start-btn::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            border-radius: 50%;
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            animation: rotate-border 4s linear infinite;
+        }
+
+        @keyframes rotate-border {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .start-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.6), inset 0 0 40px rgba(0, 255, 136, 0.2);
+        }
+
+        .start-btn.active {
+            background: var(--accent-green);
+            color: var(--primary-blue);
+        }
+
+        /* Pricing Column */
+        .pricing-column {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 15px;
+        }
+
+        .price-card {
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-align: right;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        .price-card.fun {
+            background: linear-gradient(135deg, #ffcc00, #ffdd44);
+            color: var(--primary-blue);
+        }
+
+        .price-card.standard {
+            background: linear-gradient(135deg, #ff9933, #ffbb66);
+            color: var(--primary-blue);
+        }
+
+        .price-card.golden {
+            background: linear-gradient(135deg, #ff6600, #ff8844);
+            color: white;
+        }
+
+        .price-card:hover {
+            transform: translateX(-5px) scale(1.02);
+        }
+
+        .price-card .price-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .price-card .price-value {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        /* CTA Button */
+        .cta-container {
+            margin-top: auto;
+        }
+
+        .cta-btn {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, var(--primary-blue), #1a3a5c);
+            border: 2px solid var(--accent-cyan);
+            border-radius: 30px;
+            color: var(--text-light);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cta-btn:hover {
+            background: var(--accent-cyan);
+            color: var(--primary-blue);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .cta-btn .arrow {
+            font-size: 1.2rem;
+        }
+
+        /* ============================================
+           DEMO SELECTION MODAL
+           ============================================ */
+        .demo-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 22, 40, 0.98);
+            z-index: 250;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .demo-modal.active {
+            display: flex;
+        }
+
+        .demo-selection {
+            text-align: center;
+            max-width: 900px;
+        }
+
+        .demo-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green), var(--accent-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .demo-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        .demo-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .demo-card {
+            background: linear-gradient(145deg, rgba(26, 45, 74, 0.9), rgba(10, 22, 40, 0.9));
+            border: 3px solid rgba(0, 212, 255, 0.3);
+            border-radius: 30px;
+            padding: 40px 30px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .demo-card:hover::before {
+            opacity: 1;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .demo-card.drawing {
+            border-color: rgba(255, 102, 204, 0.5);
+        }
+
+        .demo-card.drawing:hover {
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 40px rgba(255, 102, 204, 0.5);
+        }
+
+        .demo-card.puzzle {
+            border-color: rgba(255, 204, 0, 0.5);
+        }
+
+        .demo-card.puzzle:hover {
+            border-color: var(--accent-yellow);
+            box-shadow: 0 0 40px rgba(255, 204, 0, 0.5);
+        }
+
+        .demo-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .demo-card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .demo-card.drawing .demo-card-title {
+            color: var(--accent-pink);
+        }
+
+        .demo-card.puzzle .demo-card-title {
+            color: var(--accent-yellow);
+        }
+
+        .demo-card-desc {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .close-demo-modal {
+            padding: 15px 40px;
+            background: transparent;
+            border: 2px solid var(--accent-red);
+            border-radius: 25px;
+            color: var(--accent-red);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-demo-modal:hover {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        /* ============================================
+           DRAWING CANVAS INTERFACE
+           ============================================ */
+        .drawing-interface {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            z-index: 300;
+            flex-direction: column;
+        }
+
+        .drawing-interface.active {
+            display: flex;
+        }
+
+        .drawing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .drawing-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--accent-pink);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .drawing-title .icon {
+            font-size: 2rem;
+        }
+
+        .drawing-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .tool-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tool-btn:hover, .tool-btn.active {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 212, 255, 0.2);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .tool-btn.eraser:hover, .tool-btn.eraser.active {
+            border-color: var(--accent-red);
+            background: rgba(255, 51, 102, 0.2);
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 8px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+        }
+
+        .color-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .color-btn:hover, .color-btn.active {
+            transform: scale(1.2);
+            border-color: white;
+            box-shadow: 0 0 15px currentColor;
+        }
+
+        .brush-size {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .brush-size input {
+            width: 100px;
+            accent-color: var(--accent-cyan);
+        }
+
+        .drawing-main {
+            flex: 1;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drawing-canvas-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        #drawing-canvas {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            cursor: crosshair;
+        }
+
+        .webcam-preview {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 250px;
+            border-radius: 15px;
+            border: 3px solid var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        #drawing-webcam {
+            width: 100%;
+            border-radius: 12px;
+            transform: scaleX(-1);
+        }
+
+        .hand-cursor {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            transition: all 0.05s ease;
+            display: none;
+        }
+
+        .hand-cursor.visible {
+            display: block;
+        }
+
+        .hand-cursor.drawing-mode {
+            border: 3px solid white;
+            box-shadow: 0 0 20px currentColor;
+        }
+
+        .hand-cursor.eraser-mode {
+            background: rgba(255, 255, 255, 0.3);
+            border: 3px dashed white;
+        }
+
+        .exit-drawing {
+            padding: 12px 25px;
+            background: var(--accent-red);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .exit-drawing:hover {
+            transform: scale(1.05);
+            box-shadow: var(--glow-red);
+        }
+
+        .clear-canvas {
+            padding: 12px 25px;
+            background: var(--accent-orange);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .clear-canvas:hover {
+            transform: scale(1.05);
+        }
+
+        /* ============================================
+           PUZZLE GAME INTERFACE
+           ============================================ */
+        .puzzle-interface {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            z-index: 300;
+            flex-direction: column;
+        }
+
+        .puzzle-interface.active {
+            display: flex;
+        }
+
+        .puzzle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .puzzle-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--accent-yellow);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .puzzle-stats {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px 25px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 204, 0, 0.3);
+            text-align: center;
+        }
+
+        .stat-label {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--accent-yellow);
+        }
+
+        .stat-value.timer {
+            color: var(--accent-green);
+        }
+
+        .stat-value.timer.warning {
+            color: var(--accent-orange);
+            animation: pulse-warning 0.5s infinite;
+        }
+
+        .stat-value.timer.danger {
+            color: var(--accent-red);
+            animation: pulse-warning 0.3s infinite;
+        }
+
+        @keyframes pulse-warning {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .puzzle-main {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            gap: 30px;
+        }
+
+        .puzzle-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .puzzle-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 20px;
+            border: 3px solid var(--accent-yellow);
+            box-shadow: 0 0 30px rgba(255, 204, 0, 0.3);
+        }
+
+        .puzzle-slot {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .puzzle-slot.highlight {
+            border-color: var(--accent-green);
+            background: rgba(0, 255, 136, 0.2);
+            box-shadow: var(--glow-green);
+        }
+
+        .puzzle-slot.filled {
+            border: none;
+            background: transparent;
+        }
+
+        .puzzle-slot .slot-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .puzzle-pieces-container {
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .pieces-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--accent-cyan);
+            text-align: center;
+        }
+
+        .puzzle-pieces {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 20px;
+            min-height: 300px;
+        }
+
+        .puzzle-piece {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            cursor: grab;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .puzzle-piece:hover {
+            transform: scale(1.1);
+            border-color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .puzzle-piece.selected {
+            border-color: var(--accent-green);
+            box-shadow: var(--glow-green);
+            transform: scale(1.15);
+        }
+
+        .puzzle-piece.placed {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .puzzle-piece img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .puzzle-webcam-container {
+            margin-top: auto;
+        }
+
+        #puzzle-webcam {
+            width: 280px;
+            border-radius: 15px;
+            border: 3px solid var(--accent-cyan);
+            transform: scaleX(-1);
+        }
+
+        .puzzle-hand-indicator {
+            position: fixed;
+            padding: 10px 20px;
+            background: var(--accent-green);
+            color: var(--primary-blue);
+            border-radius: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            pointer-events: none;
+            z-index: 400;
+            display: none;
+        }
+
+        .puzzle-hand-indicator.visible {
+            display: block;
+        }
+
+        .exit-puzzle {
+            padding: 12px 25px;
+            background: var(--accent-red);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .exit-puzzle:hover {
+            transform: scale(1.05);
+            box-shadow: var(--glow-red);
+        }
+
+        .restart-puzzle {
+            padding: 12px 25px;
+            background: var(--accent-green);
+            border: none;
+            border-radius: 20px;
+            color: var(--primary-blue);
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .restart-puzzle:hover {
+            transform: scale(1.05);
+            box-shadow: var(--glow-green);
+        }
+
+        /* Victory Screen */
+        .victory-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 500;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .victory-overlay.active {
+            display: flex;
+        }
+
+        .victory-content {
+            text-align: center;
+            animation: victory-appear 0.5s ease;
+        }
+
+        @keyframes victory-appear {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .victory-icon {
+            font-size: 8rem;
+            animation: bounce 0.5s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .victory-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            background: linear-gradient(90deg, var(--accent-yellow), var(--accent-green), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 20px 0;
+            text-transform: uppercase;
+        }
+
+        .victory-message {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .victory-score {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--accent-yellow);
+            margin-bottom: 30px;
+        }
+
+        .victory-robot {
+            width: 200px;
+            margin: 20px auto;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        .victory-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .victory-btn {
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .victory-btn.replay {
+            background: var(--accent-green);
+            color: var(--primary-blue);
+        }
+
+        .victory-btn.exit {
+            background: transparent;
+            border: 2px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .victory-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+            z-index: 600;
+            animation: confetti-fall 3s linear forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Webcam Section */
+        #webcam-section {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 22, 40, 0.95);
+            z-index: 200;
+            padding: 20px;
+        }
+
+        #webcam-section.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .webcam-container {
+            position: relative;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        #webcam-video {
+            width: 100%;
+            border-radius: 20px;
+            border: 3px solid var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+            transform: scaleX(-1);
+        }
+
+        #hand-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            transform: scaleX(-1);
+        }
+
+        .gesture-indicator {
+            position: absolute;
+            padding: 10px 20px;
+            background: var(--accent-green);
+            color: var(--primary-blue);
+            border-radius: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            pointer-events: none;
+            transition: all 0.1s ease;
+            z-index: 10;
+        }
+
+        .close-webcam {
+            margin-top: 20px;
+            padding: 15px 40px;
+            background: var(--accent-red);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-webcam:hover {
+            transform: scale(1.05);
+            box-shadow: var(--glow-red);
+        }
+
+        .webcam-instructions {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        .webcam-instructions strong {
+            color: var(--accent-cyan);
+        }
+
+        /* Form Section */
+        #mur-form {
+            padding: 80px 30px;
+            background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.3));
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(26, 45, 74, 0.8);
+            border-radius: 30px;
+            padding: 40px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .form-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-description {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--accent-cyan);
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group textarea {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            background: rgba(10, 22, 40, 0.6);
+            color: var(--text-light);
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .radio-option,
+        .checkbox-option {
+            position: relative;
+        }
+
+        .radio-option input,
+        .checkbox-option input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .radio-option label,
+        .checkbox-option label {
+            display: inline-block;
+            padding: 10px 20px;
+            background: rgba(10, 22, 40, 0.6);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .radio-option input:checked + label,
+        .checkbox-option input:checked + label {
+            background: var(--accent-cyan);
+            color: var(--primary-blue);
+            border-color: var(--accent-cyan);
+        }
+
+        .radio-option label:hover,
+        .checkbox-option label:hover {
+            border-color: var(--accent-cyan);
+        }
+
+        .single-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(10, 22, 40, 0.6);
+            border-radius: 15px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .single-checkbox input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            cursor: pointer;
+            accent-color: var(--accent-cyan);
+        }
+
+        .single-checkbox label {
+            color: var(--text-light) !important;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--accent-green), #00cc66);
+            border: none;
+            border-radius: 25px;
+            color: var(--primary-blue);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.02);
+            box-shadow: var(--glow-green);
+        }
+
+        .form-message {
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .form-message.success {
+            display: block;
+            background: rgba(0, 255, 136, 0.2);
+            border: 2px solid var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .form-message.error {
+            display: block;
+            background: rgba(255, 51, 102, 0.2);
+            border: 2px solid var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        /* Footer */
+        #mur-footer {
+            padding: 40px 30px;
+            background: rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .footer-logo {
+            height: 40px;
+            opacity: 0.8;
+        }
+
+        .footer-company {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+        }
+
+        .footer-company .engineer {
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .footer-tagline {
+            font-family: 'Quicksand', sans-serif;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-cyan);
+        }
+
+        .footer-pioneer {
+            margin-top: 30px;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 136, 0.1));
+            border-radius: 15px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            display: inline-block;
+        }
+
+        .footer-pioneer span {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+        }
+
+        /* Consent Modal */
+        .consent-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 22, 40, 0.95);
+            z-index: 300;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .consent-modal.active {
+            display: flex;
+        }
+
+        .consent-content {
+            background: var(--secondary-blue);
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+            border: 2px solid var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .consent-content h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--accent-cyan);
+            margin-bottom: 20px;
+        }
+
+        .consent-content p {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .consent-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .consent-btn {
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .consent-btn.accept {
+            background: var(--accent-green);
+            color: var(--primary-blue);
+        }
+
+        .consent-btn.decline {
+            background: transparent;
+            border: 2px solid var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        .consent-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Voice indicator */
+        .voice-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--secondary-blue);
+            border: 2px solid var(--accent-cyan);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .voice-indicator:hover {
+            transform: scale(1.1);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .voice-indicator.speaking {
+            animation: voice-pulse 0.5s infinite;
+        }
+
+        @keyframes voice-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.5); }
+            50% { box-shadow: 0 0 0 15px rgba(0, 212, 255, 0); }
+        }
+
+        .voice-icon {
+            width: 30px;
+            height: 30px;
+            fill: var(--accent-cyan);
+        }
+
+        /* Name Input Modal */
+        .name-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 22, 40, 0.95);
+            z-index: 350;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .name-modal.active {
+            display: flex;
+        }
+
+        .name-content {
+            background: var(--secondary-blue);
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 450px;
+            text-align: center;
+            border: 2px solid var(--accent-yellow);
+            box-shadow: 0 0 40px rgba(255, 204, 0, 0.3);
+        }
+
+        .name-content h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--accent-yellow);
+            margin-bottom: 20px;
+        }
+
+        .name-content p {
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+
+        .name-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 3px solid var(--accent-cyan);
+            border-radius: 20px;
+            background: rgba(10, 22, 40, 0.8);
+            color: var(--text-light);
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.3rem;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .name-input:focus {
+            outline: none;
+            box-shadow: var(--glow-cyan);
+        }
+
+        .name-submit {
+            padding: 15px 40px;
+            background: var(--accent-green);
+            border: none;
+            border-radius: 25px;
+            color: var(--primary-blue);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .name-submit:hover {
+            transform: scale(1.05);
+            box-shadow: var(--glow-green);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .themes-column,
+            .pricing-column {
+                align-items: center;
+            }
+
+            .pricing-column {
+                align-items: center;
+            }
+
+            .price-card {
+                text-align: center;
+            }
+
+            .robot-img {
+                width: 180px;
+            }
+
+            .demo-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .puzzle-main {
+                flex-direction: column;
+            }
+
+            .puzzle-pieces-container {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                gap: 10px;
+                padding: 10px 15px;
+            }
+
+            .logo-text {
+                font-size: 1.4rem;
+            }
+
+            .form-container {
+                padding: 25px 20px;
+            }
+
+            .form-title {
+                font-size: 1.5rem;
+            }
+
+            .radio-group,
+            .checkbox-group {
+                flex-direction: column;
+            }
+
+            .puzzle-slot {
+                width: 80px;
+                height: 80px;
+            }
+
+            .puzzle-piece {
+                width: 60px;
+                height: 60px;
+            }
+        }
+
+        /* Hover elements for gesture detection */
+        .gesture-hoverable {
+            position: relative;
+        }
+
+        .gesture-hoverable::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 3px solid transparent;
+            border-radius: inherit;
+            transition: border-color 0.3s ease;
+            pointer-events: none;
+        }
+
+        .gesture-hoverable.gesture-hover::after {
+            border-color: var(--accent-cyan);
+            animation: gesture-glow 0.5s infinite;
+        }
+
+        @keyframes gesture-glow {
+            0%, 100% { box-shadow: 0 0 10px var(--accent-cyan); }
+            50% { box-shadow: 0 0 25px var(--accent-cyan); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Stars Background -->
+    <div class="stars-container" id="stars"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="2026-02-02_16h51_26.png" alt="Wall2Touch Logo" class="logo-img">
+            <span class="logo-text">MurTactile</span>
+        </div>
+        <div class="company-badge">Service R&D • SARL Jonas Browser High-Tech</div>
+    </header>
+
+    <!-- Main Hero Section -->
+    <section id="mur-hero">
+        <div class="hero-content">
+            <!-- Left Column: Themes & Concepts -->
+            <div class="themes-column">
+                <button class="theme-btn educatif gesture-hoverable active" data-theme="educatif">
+                    THEME: Éducatif
+                </button>
+                <button class="theme-btn jeux gesture-hoverable" data-theme="jeux">
+                    THEME: Jeux & Divertissement
+                </button>
+                <button class="theme-btn vr gesture-hoverable" data-theme="vr">
+                    THEME: Réalité Virtuelle & RA
+                </button>
+
+                <div class="concepts-container" id="concepts-container">
+                    <button class="concept-btn gesture-hoverable" data-concept="tactile">Concept : MUR TACTILE</button>
+                    <button class="concept-btn gesture-hoverable" data-concept="gestuelle">Concept : GESTUELLE</button>
+                    <button class="concept-btn gesture-hoverable" data-concept="audio">Concept : AUDIO</button>
+                </div>
+
+                <div class="age-container">
+                    <button class="age-btn gesture-hoverable" data-age="4-6">Âge : 4–6 ans</button>
+                    <button class="age-btn gesture-hoverable" data-age="7-12">Âge : 7–12 ans</button>
+                </div>
+            </div>
+
+            <!-- Center Column: Robot JQ -->
+            <div class="robot-column">
+                <div class="robot-container">
+                    <div class="speech-bubble" id="speech-bubble">
+                        <span class="robot-name">Robot JQ</span>
+                        Choisissez l'appli qui correspond à l'âge et aux besoins de votre enfant.
+                    </div>
+                    <div class="robot-glow"></div>
+                    <img src="2026-01-31_16h07_08.png" alt="Robot JQ - Mascotte MurTactile" class="robot-img">
+                </div>
+                <div class="start-btn-container">
+                    <button class="start-btn gesture-hoverable" id="start-btn">START</button>
+                </div>
+            </div>
+
+            <!-- Right Column: Pricing -->
+            <div class="pricing-column">
+                <div class="price-card fun gesture-hoverable" data-plan="fun">
+                    <div class="price-name">PRIX FUN</div>
+                    <div class="price-value">15–25 €</div>
+                </div>
+                <div class="price-card standard gesture-hoverable" data-plan="standard">
+                    <div class="price-name">PRIX STANDARD</div>
+                    <div class="price-value">30–45 €</div>
+                </div>
+                <div class="price-card golden gesture-hoverable" data-plan="golden">
+                    <div class="price-name">PRIX GOLDEN</div>
+                    <div class="price-value">50–80 €</div>
+                </div>
+
+                <div class="cta-container">
+                    <button class="cta-btn gesture-hoverable" id="cta-abonnement">
+                        Abonnement <span class="arrow">◇</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Selection Modal -->
+    <div class="demo-modal" id="demo-modal">
+        <div class="demo-selection">
+            <h2 class="demo-title">🎮 Choisis ton activité !</h2>
+            <p class="demo-subtitle">Robot JQ t'accompagne dans ces expériences interactives</p>
+            
+            <div class="demo-cards">
+                <div class="demo-card drawing" id="demo-drawing">
+                    <div class="demo-icon">🎨</div>
+                    <h3 class="demo-card-title">Tableau de Dessin</h3>
+                    <p class="demo-card-desc">Dessine avec tes mains dans l'air ! Choisis tes couleurs, dessine et efface comme par magie. Une vraie expérience de réalité virtuelle !</p>
+                </div>
+                <div class="demo-card puzzle" id="demo-puzzle">
+                    <div class="demo-icon">🧩</div>
+                    <h3 class="demo-card-title">Puzzle Robot JQ</h3>
+                    <p class="demo-card-desc">Reconstitue le Robot JQ avec tes gestes ! Tu as 3 minutes pour placer toutes les pièces. Gagne des points et montre tes talents !</p>
+                </div>
+            </div>
+
+            <button class="close-demo-modal" id="close-demo-modal">Retour à l'accueil</button>
+        </div>
+    </div>
+
+    <!-- Name Input Modal -->
+    <div class="name-modal" id="name-modal">
+        <div class="name-content">
+            <h3>👋 Comment tu t'appelles ?</h3>
+            <p>Robot JQ veut connaître ton prénom pour t'encourager !</p>
+            <input type="text" class="name-input" id="player-name" placeholder="Ton prénom..." maxlength="20">
+            <button class="name-submit" id="name-submit">C'est parti ! 🚀</button>
+        </div>
+    </div>
+
+    <!-- ============================================
+         DRAWING INTERFACE
+         ============================================ -->
+    <div class="drawing-interface" id="drawing-interface">
+        <div class="drawing-header">
+            <div class="drawing-title">
+                <span class="icon">🎨</span>
+                Tableau Magique – Dessine avec tes mains !
+            </div>
+            <div class="drawing-controls">
+                <div class="color-palette">
+                    <button class="color-btn active" style="background: #ff3366;" data-color="#ff3366"></button>
+                    <button class="color-btn" style="background: #ff9933;" data-color="#ff9933"></button>
+                    <button class="color-btn" style="background: #ffcc00;" data-color="#ffcc00"></button>
+                    <button class="color-btn" style="background: #00ff88;" data-color="#00ff88"></button>
+                    <button class="color-btn" style="background: #00d4ff;" data-color="#00d4ff"></button>
+                    <button class="color-btn" style="background: #8844ff;" data-color="#8844ff"></button>
+                    <button class="color-btn" style="background: #ff66cc;" data-color="#ff66cc"></button>
+                    <button class="color-btn" style="background: #ffffff;" data-color="#ffffff"></button>
+                    <button class="color-btn" style="background: #000000;" data-color="#000000"></button>
+                </div>
+                <div class="brush-size">
+                    <span>Taille:</span>
+                    <input type="range" id="brush-size" min="5" max="50" value="15">
+                    <span id="brush-size-value">15</span>
+                </div>
+                <button class="tool-btn" id="draw-tool" title="Dessiner">✏️</button>
+                <button class="tool-btn eraser" id="eraser-tool" title="Effacer">🧹</button>
+                <button class="clear-canvas" id="clear-canvas">🗑️ Effacer tout</button>
+                <button class="exit-drawing" id="exit-drawing">✖ Quitter</button>
+            </div>
+        </div>
+        <div class="drawing-main">
+            <div class="drawing-canvas-container">
+                <canvas id="drawing-canvas" width="900" height="600"></canvas>
+                <div class="webcam-preview">
+                    <video id="drawing-webcam" autoplay playsinline></video>
+                </div>
+            </div>
+        </div>
+        <div class="hand-cursor" id="hand-cursor"></div>
+    </div>
+
+    <!-- ============================================
+         PUZZLE INTERFACE
+         ============================================ -->
+    <div class="puzzle-interface" id="puzzle-interface">
+        <div class="puzzle-header">
+            <div class="puzzle-title">
+                <span>🧩</span>
+                Puzzle Robot JQ
+            </div>
+            <div class="puzzle-stats">
+                <div class="stat-box">
+                    <div class="stat-label">⏱️ TEMPS</div>
+                    <div class="stat-value timer" id="puzzle-timer">3:00</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">⭐ SCORE</div>
+                    <div class="stat-value" id="puzzle-score">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">🧩 PIÈCES</div>
+                    <div class="stat-value" id="puzzle-pieces-count">0/9</div>
+                </div>
+            </div>
+            <div>
+                <button class="restart-puzzle" id="restart-puzzle">🔄 Recommencer</button>
+                <button class="exit-puzzle" id="exit-puzzle">✖ Quitter</button>
+            </div>
+        </div>
+        <div class="puzzle-main">
+            <div class="puzzle-area">
+                <div class="puzzle-grid" id="puzzle-grid">
+                    <!-- 9 slots will be generated -->
+                </div>
+            </div>
+            <div class="puzzle-pieces-container">
+                <div class="pieces-title">📦 Pièces à placer</div>
+                <div class="puzzle-pieces" id="puzzle-pieces">
+                    <!-- Pieces will be generated -->
+                </div>
+                <div class="puzzle-webcam-container">
+                    <video id="puzzle-webcam" autoplay playsinline></video>
+                </div>
+            </div>
+        </div>
+        <div class="puzzle-hand-indicator" id="puzzle-hand-indicator">✋ Main détectée</div>
+    </div>
+
+    <!-- Victory Overlay -->
+    <div class="victory-overlay" id="victory-overlay">
+        <div class="victory-content">
+            <div class="victory-icon">🏆</div>
+            <h2 class="victory-title">BRAVO !</h2>
+            <p class="victory-message" id="victory-message">Tu as réussi le puzzle !</p>
+            <p class="victory-score" id="victory-score">Score: 1000 points</p>
+            <img src="2026-01-31_16h07_08.png" alt="Robot JQ" class="victory-robot">
+            <div class="victory-buttons">
+                <button class="victory-btn replay" id="victory-replay">🔄 Rejouer</button>
+                <button class="victory-btn exit" id="victory-exit">🏠 Accueil</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscription Form Section -->
+    <section id="mur-form">
+        <div class="form-container">
+            <h2 class="form-title">Formulaire d'abonnement MurTactile</h2>
+            <p class="form-description">Ce formulaire nous aide à comprendre vos besoins pour adapter la solution MurTactile.</p>
+
+            <form id="murTactileSubscriptionForm">
+                <!-- Profil -->
+                <div class="form-group">
+                    <label>Vous êtes : *</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="profil-parent" name="profil" value="Parent / famille" required>
+                            <label for="profil-parent">Parent / famille</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="profil-ecole" name="profil" value="École / Collège">
+                            <label for="profil-ecole">École / Collège</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="profil-centre" name="profil" value="Centre de loisirs">
+                            <label for="profil-centre">Centre de loisirs</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="profil-autre" name="profil" value="Autre structure">
+                            <label for="profil-autre">Autre structure</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Name -->
+                <div class="form-group">
+                    <label for="contact_name">Nom / Prénom du contact *</label>
+                    <input type="text" id="contact_name" name="contact_name" required>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <!-- Telephone -->
+                <div class="form-group">
+                    <label for="telephone">Téléphone</label>
+                    <input type="text" id="telephone" name="telephone">
+                </div>
+
+                <!-- Ville -->
+                <div class="form-group">
+                    <label for="ville">Ville *</label>
+                    <input type="text" id="ville" name="ville" required>
+                </div>
+
+                <!-- Age Groups -->
+                <div class="form-group">
+                    <label>Tranche(s) d'âge concernée(s) : *</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="age-4-6" name="age_children" value="4–6 ans">
+                            <label for="age-4-6">4–6 ans</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="age-7-9" name="age_children" value="7–9 ans">
+                            <label for="age-7-9">7–9 ans</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="age-10-12" name="age_children" value="10–12 ans">
+                            <label for="age-10-12">10–12 ans</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Themes Interest -->
+                <div class="form-group">
+                    <label>Thèmes qui vous intéressent le plus :</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="theme-edu" name="themes_interet" value="Educatif">
+                            <label for="theme-edu">Éducatif (scolaire, langage, maths)</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="theme-jeux" name="themes_interet" value="Jeux">
+                            <label for="theme-jeux">Jeux & Divertissement</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="theme-vr" name="themes_interet" value="VR/RA">
+                            <label for="theme-vr">Réalité virtuelle & RA</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="theme-motricite" name="themes_interet" value="Motricité">
+                            <label for="theme-motricite">Parcours motricité / gestuelle</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="theme-audio" name="themes_interet" value="Audio">
+                            <label for="theme-audio">Audio / histoires interactives</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mode Utilisation -->
+                <div class="form-group">
+                    <label>Comment souhaitez-vous utiliser le MurTactile ?</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="mode-event" name="mode_utilisation" value="Animation ponctuelle">
+                            <label for="mode-event">Animation ponctuelle (événements, ateliers)</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="mode-regulier" name="mode_utilisation" value="Utilisation régulière">
+                            <label for="mode-regulier">Utilisation régulière dans une salle dédiée</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="mode-classe" name="mode_utilisation" value="Complément pédagogique">
+                            <label for="mode-classe">Complément pédagogique en classe</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="mode-ia" name="mode_utilisation" value="Atelier IA">
+                            <label for="mode-ia">Atelier découverte IA / gestuelle</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subscription Plan -->
+                <div class="form-group">
+                    <label>Formule envisagée : *</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="plan-fun" name="subscription_plan" value="FUN (15–25 €/mois)" required>
+                            <label for="plan-fun">FUN (15–25 €/mois)</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="plan-standard" name="subscription_plan" value="STANDARD (30–45 €/mois)">
+                            <label for="plan-standard">STANDARD (30–45 €/mois)</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="plan-golden" name="subscription_plan" value="GOLDEN (50–80 €/mois)">
+                            <label for="plan-golden">GOLDEN (50–80 €/mois)</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="plan-demo" name="subscription_plan" value="Démo gratuite">
+                            <label for="plan-demo">Je souhaite d'abord une démo gratuite</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Webcam Accept -->
+                <div class="form-group">
+                    <div class="single-checkbox">
+                        <input type="checkbox" id="webcam_accept" name="webcam_accept" required>
+                        <label for="webcam_accept">J'accepte le principe d'une utilisation avec webcam pour la détection gestuelle (aucune vidéo stockée). *</label>
+                    </div>
+                </div>
+
+                <!-- Message -->
+                <div class="form-group">
+                    <label for="message">Précisez vos besoins / votre projet MurTactile :</label>
+                    <textarea id="message" name="message" placeholder="Ex : mur interactif dans une salle d'attente, atelier gestuel pour enfants, sensibilisation au numérique, etc."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Envoyer ma demande d'abonnement</button>
+            </form>
+
+            <div class="form-message" id="form-message"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="mur-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="2026-02-02_16h51_26.png" alt="Wall2Touch" class="footer-logo">
+                <div class="footer-company">
+                    Concept développé par Ingénieur <span class="engineer">GAUTIER HAYET</span><br>
+                    SARL Jonas Browser High-Tech • Service R&D
+                </div>
+            </div>
+            <p class="footer-tagline">MurTactile – Concept hybride gestuel & manuel • Une expérience éducative, ludique et immersive.</p>
+            <div class="footer-pioneer">
+                <span>🚀 Pionnier de l'Intelligence Artificielle • Un concept unique Wall2Touch.com</span>
+            </div>
+            <div class="footer-links">
+                <a href="#">Mentions légales</a>
+                <a href="#">Politique de confidentialité</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Webcam Consent Modal -->
+    <div class="consent-modal" id="consent-modal">
+        <div class="consent-content">
+            <h3>🎥 Activation du Mode Gestuel</h3>
+            <p>Pour activer le mode gestuel MurTactile, vous devez autoriser l'accès à la webcam.<br><br>
+            <strong>Aucune image ni vidéo n'est stockée.</strong><br>
+            La détection des mains s'effectue uniquement en local dans votre navigateur.</p>
+            <div class="consent-buttons">
+                <button class="consent-btn accept" id="consent-accept">Autoriser la webcam</button>
+                <button class="consent-btn decline" id="consent-decline">Non merci</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voice Assistant Indicator -->
+    <div class="voice-indicator" id="voice-indicator" title="Assistant vocal Robot JQ">
+        <svg class="voice-icon" viewBox="0 0 24 24">
+            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/>
+        </svg>
+    </div>
+
+    <!-- MediaPipe Hands Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <script>
+        // ============================================
+        // MurTactile Interactive Demo v2
+        // Developed by GAUTIER HAYET - SARL Jonas Browser High-Tech
+        // Pionnier de l'Intelligence Artificielle
+        // ============================================
+
+        // Global State
+        let playerName = "Champion";
+        let currentMode = null; // 'drawing' or 'puzzle'
+
+        // Generate animated stars
+        function createStars() {
+            const container = document.getElementById('stars');
+            const starCount = 100;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 2 + 's';
+                star.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                container.appendChild(star);
+            }
+        }
+        createStars();
+
+        // ============================================
+        // Audio Manager
+        // ============================================
+        class AudioManager {
+            constructor() {
+                this.audioCtx = null;
+            }
+
+            init() {
+                if (!this.audioCtx) {
+                    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            playTone(frequency, duration, type = 'sine', volume = 0.3) {
+                this.init();
+                const oscillator = this.audioCtx.createOscillator();
+                const gainNode = this.audioCtx.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioCtx.destination);
+                
+                oscillator.frequency.value = frequency;
+                oscillator.type = type;
+                gainNode.gain.setValueAtTime(volume, this.audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + duration);
+                
+                oscillator.start(this.audioCtx.currentTime);
+                oscillator.stop(this.audioCtx.currentTime + duration);
+            }
+
+            playDetection() {
+                this.playTone(800, 0.15, 'sine', 0.2);
+            }
+
+            playSuccess() {
+                this.playTone(523, 0.15);
+                setTimeout(() => this.playTone(659, 0.15), 150);
+                setTimeout(() => this.playTone(784, 0.3), 300);
+            }
+
+            playPlacement() {
+                this.playTone(600, 0.1, 'sine', 0.3);
+            }
+
+            playVictory() {
+                const notes = [523, 659, 784, 1047];
+                notes.forEach((note, i) => {
+                    setTimeout(() => this.playTone(note, 0.3, 'sine', 0.3), i * 200);
+                });
+            }
+
+            playApplause() {
+                // Simulate applause with noise
+                this.init();
+                const bufferSize = this.audioCtx.sampleRate * 2;
+                const buffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 0.5);
+                }
+                
+                const source = this.audioCtx.createBufferSource();
+                const gainNode = this.audioCtx.createGain();
+                source.buffer = buffer;
+                source.connect(gainNode);
+                gainNode.connect(this.audioCtx.destination);
+                gainNode.gain.value = 0.3;
+                source.start();
+            }
+
+            playWarning() {
+                this.playTone(400, 0.2, 'square', 0.2);
+            }
+
+            playGameOver() {
+                this.playTone(300, 0.3, 'sawtooth', 0.2);
+                setTimeout(() => this.playTone(200, 0.5, 'sawtooth', 0.2), 300);
+            }
+        }
+
+        const audioManager = new AudioManager();
+
+        // ============================================
+        // Voice Assistant (Robot JQ)
+        // ============================================
+        class VoiceAssistant {
+            constructor() {
+                this.synth = window.speechSynthesis;
+                this.indicator = document.getElementById('voice-indicator');
+                this.speechBubble = document.getElementById('speech-bubble');
+                this.isSpeaking = false;
+                this.init();
+            }
+
+            init() {
+                this.indicator.addEventListener('click', () => this.toggleVoice());
+            }
+
+            speak(text, showInBubble = true) {
+                if (this.synth.speaking) {
+                    this.synth.cancel();
+                }
+
+                if (showInBubble && this.speechBubble) {
+                    this.updateBubble(text);
+                }
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'fr-FR';
+                utterance.rate = 0.95;
+                utterance.pitch = 1.1;
+
+                utterance.onstart = () => {
+                    this.isSpeaking = true;
+                    this.indicator.classList.add('speaking');
+                };
+
+                utterance.onend = () => {
+                    this.isSpeaking = false;
+                    this.indicator.classList.remove('speaking');
+                };
+
+                this.synth.speak(utterance);
+            }
+
+            updateBubble(text) {
+                if (this.speechBubble) {
+                    this.speechBubble.innerHTML = `<span class="robot-name">Robot JQ</span>${text}`;
+                }
+            }
+
+            toggleVoice() {
+                if (this.isSpeaking) {
+                    this.synth.cancel();
+                } else {
+                    this.speak("Salut ! Je suis Robot JQ, ton guide MurTactile. Clique sur START pour découvrir les activités interactives !");
+                }
+            }
+
+            stop() {
+                this.synth.cancel();
+            }
+        }
+
+        const voiceAssistant = new VoiceAssistant();
+
+        // Initial greeting
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                voiceAssistant.speak("Bienvenue sur MurTactile ! Je suis Robot JQ. Appuie sur START pour jouer avec tes mains !");
+            }, 1500);
+        });
+
+        // ============================================
+        // Theme, Age, and Pricing Selection
+        // ============================================
+        const themes = document.querySelectorAll('.theme-btn');
+        const ageButtons = document.querySelectorAll('.age-btn');
+        const priceCards = document.querySelectorAll('.price-card');
+        const conceptButtons = document.querySelectorAll('.concept-btn');
+
+        const themeMessages = {
+            'educatif': "Excellent choix ! Le thème éducatif propose des activités de mathématiques, de langage et de sciences.",
+            'jeux': "Le thème Jeux et Divertissement offre des expériences ludiques et interactives !",
+            'vr': "Découvrez la réalité virtuelle et augmentée ! Une immersion totale !"
+        };
+
+        const ageMessages = {
+            '4-6': "Super ! Pour les 4 à 6 ans, des activités simples et colorées avec beaucoup de sons.",
+            '7-12': "Parfait ! Pour les 7 à 12 ans, des défis plus complexes avec des quiz et jeux de logique."
+        };
+
+        const priceMessages = {
+            'fun': "La formule FUN à 15-25 euros par mois offre un accès découverte.",
+            'standard': "La formule STANDARD à 30-45 euros permet un accès régulier à tous les thèmes.",
+            'golden': "La formule GOLDEN à 50-80 euros donne un accès complet plus les nouveautés exclusives !"
+        };
+
+        themes.forEach(btn => {
+            btn.addEventListener('click', () => {
+                themes.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                voiceAssistant.speak(themeMessages[btn.dataset.theme]);
+            });
+        });
+
+        ageButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                ageButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                voiceAssistant.speak(ageMessages[btn.dataset.age]);
+            });
+        });
+
+        priceCards.forEach(card => {
+            card.addEventListener('click', () => {
+                voiceAssistant.speak(priceMessages[card.dataset.plan]);
+            });
+        });
+
+        conceptButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const messages = {
+                    'tactile': "Le mur tactile permet d'interagir directement avec l'écran !",
+                    'gestuelle': "La détection gestuelle utilise ta webcam pour reconnaître tes mouvements !",
+                    'audio': "Le mode audio propose des histoires interactives et des consignes vocales !"
+                };
+                voiceAssistant.speak(messages[btn.dataset.concept]);
+            });
+        });
+
+        // CTA Subscription
+        document.getElementById('cta-abonnement').addEventListener('click', () => {
+            document.getElementById('mur-form').scrollIntoView({ behavior: 'smooth' });
+            voiceAssistant.speak("Remplissez le formulaire pour nous faire part de vos besoins !");
+        });
+
+        // ============================================
+        // START Button & Demo Selection
+        // ============================================
+        const startBtn = document.getElementById('start-btn');
+        const consentModal = document.getElementById('consent-modal');
+        const demoModal = document.getElementById('demo-modal');
+        const nameModal = document.getElementById('name-modal');
+
+        startBtn.addEventListener('click', () => {
+            consentModal.classList.add('active');
+            voiceAssistant.speak("Pour jouer avec tes mains, j'ai besoin d'accéder à ta webcam. Rassure-toi, aucune vidéo n'est enregistrée !");
+        });
+
+        document.getElementById('consent-decline').addEventListener('click', () => {
+            consentModal.classList.remove('active');
+            voiceAssistant.speak("Pas de problème ! Tu peux quand même utiliser MurTactile avec la souris.");
+        });
+
+        document.getElementById('consent-accept').addEventListener('click', () => {
+            consentModal.classList.remove('active');
+            nameModal.classList.add('active');
+            voiceAssistant.speak("Super ! Comment tu t'appelles ? Je veux connaître ton prénom pour t'encourager !");
+        });
+
+        document.getElementById('name-submit').addEventListener('click', () => {
+            const nameInput = document.getElementById('player-name');
+            playerName = nameInput.value.trim() || "Champion";
+            nameModal.classList.remove('active');
+            demoModal.classList.add('active');
+            voiceAssistant.speak(`Enchanté ${playerName} ! Choisis ton activité : le Tableau de Dessin pour créer des œuvres d'art, ou le Puzzle Robot JQ pour reconstituer mon image !`);
+        });
+
+        document.getElementById('player-name').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('name-submit').click();
+            }
+        });
+
+        document.getElementById('close-demo-modal').addEventListener('click', () => {
+            demoModal.classList.remove('active');
+        });
+
+        // Demo card selection
+        document.getElementById('demo-drawing').addEventListener('click', () => {
+            demoModal.classList.remove('active');
+            startDrawingMode();
+        });
+
+        document.getElementById('demo-puzzle').addEventListener('click', () => {
+            demoModal.classList.remove('active');
+            startPuzzleMode();
+        });
+
+        // ============================================
+        // DRAWING MODE
+        // ============================================
+        let drawingCanvas, drawingCtx;
+        let drawingHands = null;
+        let drawingCamera = null;
+        let isDrawing = false;
+        let currentColor = '#ff3366';
+        let brushSize = 15;
+        let isEraser = false;
+        let lastX = 0, lastY = 0;
+        let drawingActive = false;
+
+        async function startDrawingMode() {
+            currentMode = 'drawing';
+            const drawingInterface = document.getElementById('drawing-interface');
+            drawingInterface.classList.add('active');
+            
+            drawingCanvas = document.getElementById('drawing-canvas');
+            drawingCtx = drawingCanvas.getContext('2d');
+            
+            // Clear canvas
+            drawingCtx.fillStyle = 'white';
+            drawingCtx.fillRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+            
+            voiceAssistant.speak(`${playerName}, bienvenue dans le Tableau Magique ! Montre ta main à la caméra. Quand je détecte ta main, tu peux dessiner dans l'air ! Choisis tes couleurs en haut, et amuse-toi !`);
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: 640, height: 480, facingMode: 'user' } 
+                });
+                
+                const video = document.getElementById('drawing-webcam');
+                video.srcObject = stream;
+                
+                drawingHands = new Hands({
+                    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+                });
+
+                drawingHands.setOptions({
+                    maxNumHands: 1,
+                    modelComplexity: 1,
+                    minDetectionConfidence: 0.7,
+                    minTrackingConfidence: 0.5
+                });
+
+                drawingHands.onResults(onDrawingResults);
+                
+                drawingCamera = new Camera(video, {
+                    onFrame: async () => {
+                        if (drawingActive) {
+                            await drawingHands.send({ image: video });
+                        }
+                    },
+                    width: 640,
+                    height: 480
+                });
+
+                drawingActive = true;
+                drawingCamera.start();
+
+            } catch (err) {
+                console.error('Webcam error:', err);
+                voiceAssistant.speak("Oups, je n'arrive pas à accéder à ta webcam. Tu peux dessiner avec la souris !");
+            }
+            
+            setupDrawingControls();
+        }
+
+        function onDrawingResults(results) {
+            const handCursor = document.getElementById('hand-cursor');
+            
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                const landmarks = results.multiHandLandmarks[0];
+                const indexTip = landmarks[8]; // Index finger tip
+                const thumbTip = landmarks[4]; // Thumb tip
+                
+                // Calculate screen position
+                const canvasRect = drawingCanvas.getBoundingClientRect();
+                const x = (1 - indexTip.x) * canvasRect.width + canvasRect.left;
+                const y = indexTip.y * canvasRect.height + canvasRect.top;
+                
+                // Show cursor
+                handCursor.classList.add('visible');
+                handCursor.style.left = x + 'px';
+                handCursor.style.top = y + 'px';
+                handCursor.style.background = isEraser ? 'transparent' : currentColor;
+                handCursor.className = `hand-cursor visible ${isEraser ? 'eraser-mode' : 'drawing-mode'}`;
+                
+                // Check if pinching (thumb and index close together) = drawing
+                const distance = Math.sqrt(
+                    Math.pow(indexTip.x - thumbTip.x, 2) + 
+                    Math.pow(indexTip.y - thumbTip.y, 2)
+                );
+                
+                const canvasX = (1 - indexTip.x) * drawingCanvas.width;
+                const canvasY = indexTip.y * drawingCanvas.height;
+                
+                if (distance < 0.05) { // Pinching = drawing
+                    if (!isDrawing) {
+                        isDrawing = true;
+                        lastX = canvasX;
+                        lastY = canvasY;
+                        audioManager.playDetection();
+                    }
+                    
+                    // Draw line
+                    drawingCtx.beginPath();
+                    drawingCtx.moveTo(lastX, lastY);
+                    drawingCtx.lineTo(canvasX, canvasY);
+                    drawingCtx.strokeStyle = isEraser ? 'white' : currentColor;
+                    drawingCtx.lineWidth = brushSize;
+                    drawingCtx.lineCap = 'round';
+                    drawingCtx.lineJoin = 'round';
+                    drawingCtx.stroke();
+                    
+                    lastX = canvasX;
+                    lastY = canvasY;
+                } else {
+                    isDrawing = false;
+                }
+            } else {
+                handCursor.classList.remove('visible');
+                isDrawing = false;
+            }
+        }
+
+        function setupDrawingControls() {
+            // Color selection
+            document.querySelectorAll('.color-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentColor = btn.dataset.color;
+                    isEraser = false;
+                    document.getElementById('eraser-tool').classList.remove('active');
+                    document.getElementById('draw-tool').classList.add('active');
+                });
+            });
+            
+            // Brush size
+            const brushSlider = document.getElementById('brush-size');
+            brushSlider.addEventListener('input', () => {
+                brushSize = parseInt(brushSlider.value);
+                document.getElementById('brush-size-value').textContent = brushSize;
+            });
+            
+            // Draw tool
+            document.getElementById('draw-tool').addEventListener('click', () => {
+                isEraser = false;
+                document.getElementById('draw-tool').classList.add('active');
+                document.getElementById('eraser-tool').classList.remove('active');
+            });
+            
+            // Eraser
+            document.getElementById('eraser-tool').addEventListener('click', () => {
+                isEraser = true;
+                document.getElementById('eraser-tool').classList.add('active');
+                document.getElementById('draw-tool').classList.remove('active');
+                voiceAssistant.speak("Mode gomme activé ! Pince tes doigts pour effacer.");
+            });
+            
+            // Clear canvas
+            document.getElementById('clear-canvas').addEventListener('click', () => {
+                drawingCtx.fillStyle = 'white';
+                drawingCtx.fillRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+                voiceAssistant.speak("Tableau effacé ! Tu peux recommencer ton chef-d'œuvre.");
+            });
+            
+            // Exit drawing
+            document.getElementById('exit-drawing').addEventListener('click', exitDrawingMode);
+            
+            // Mouse fallback
+            let mouseDown = false;
+            drawingCanvas.addEventListener('mousedown', (e) => {
+                mouseDown = true;
+                const rect = drawingCanvas.getBoundingClientRect();
+                lastX = e.clientX - rect.left;
+                lastY = e.clientY - rect.top;
+            });
+            
+            drawingCanvas.addEventListener('mousemove', (e) => {
+                if (!mouseDown) return;
+                const rect = drawingCanvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                drawingCtx.beginPath();
+                drawingCtx.moveTo(lastX, lastY);
+                drawingCtx.lineTo(x, y);
+                drawingCtx.strokeStyle = isEraser ? 'white' : currentColor;
+                drawingCtx.lineWidth = brushSize;
+                drawingCtx.lineCap = 'round';
+                drawingCtx.stroke();
+                
+                lastX = x;
+                lastY = y;
+            });
+            
+            drawingCanvas.addEventListener('mouseup', () => mouseDown = false);
+            drawingCanvas.addEventListener('mouseleave', () => mouseDown = false);
+        }
+
+        function exitDrawingMode() {
+            drawingActive = false;
+            if (drawingCamera) drawingCamera.stop();
+            
+            const video = document.getElementById('drawing-webcam');
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+            
+            document.getElementById('drawing-interface').classList.remove('active');
+            document.getElementById('hand-cursor').classList.remove('visible');
+            
+            demoModal.classList.add('active');
+            voiceAssistant.speak(`Bravo ${playerName} ! Tu as créé de belles choses. Tu veux essayer une autre activité ?`);
+            
+            currentMode = null;
+        }
+
+        // ============================================
+        // PUZZLE MODE
+        // ============================================
+        let puzzleHands = null;
+        let puzzleCamera = null;
+        let puzzleActive = false;
+        let puzzleTimer = null;
+        let timeRemaining = 180; // 3 minutes
+        let puzzleScore = 0;
+        let placedPieces = 0;
+        let selectedPiece = null;
+        let puzzlePieces = [];
+        let puzzleSlots = [];
+
+        async function startPuzzleMode() {
+            currentMode = 'puzzle';
+            const puzzleInterface = document.getElementById('puzzle-interface');
+            puzzleInterface.classList.add('active');
+            
+            voiceAssistant.speak(`${playerName}, bienvenue dans le Puzzle Robot JQ ! Tu as 3 minutes pour reconstituer mon image. Utilise ta main pour sélectionner et placer les pièces. Plus tu es rapide, plus tu gagnes de points ! C'est parti !`);
+            
+            initPuzzle();
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: 640, height: 480, facingMode: 'user' } 
+                });
+                
+                const video = document.getElementById('puzzle-webcam');
+                video.srcObject = stream;
+                
+                puzzleHands = new Hands({
+                    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+                });
+
+                puzzleHands.setOptions({
+                    maxNumHands: 1,
+                    modelComplexity: 1,
+                    minDetectionConfidence: 0.7,
+                    minTrackingConfidence: 0.5
+                });
+
+                puzzleHands.onResults(onPuzzleResults);
+                
+                puzzleCamera = new Camera(video, {
+                    onFrame: async () => {
+                        if (puzzleActive) {
+                            await puzzleHands.send({ image: video });
+                        }
+                    },
+                    width: 640,
+                    height: 480
+                });
+
+                puzzleActive = true;
+                puzzleCamera.start();
+
+            } catch (err) {
+                console.error('Webcam error:', err);
+                voiceAssistant.speak("Oups, je n'arrive pas à accéder à ta webcam. Tu peux jouer avec la souris !");
+            }
+            
+            startPuzzleTimer();
+        }
+
+        function initPuzzle() {
+            timeRemaining = 180;
+            puzzleScore = 0;
+            placedPieces = 0;
+            selectedPiece = null;
+            puzzlePieces = [];
+            puzzleSlots = [];
+            
+            updatePuzzleDisplay();
+            
+            // Create puzzle grid (3x3)
+            const grid = document.getElementById('puzzle-grid');
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < 9; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'puzzle-slot';
+                slot.dataset.index = i;
+                slot.innerHTML = `<span class="slot-number">${i + 1}</span>`;
+                
+                slot.addEventListener('click', () => placePiece(i));
+                
+                grid.appendChild(slot);
+                puzzleSlots.push(slot);
+            }
+            
+            // Create puzzle pieces (shuffled)
+            const piecesContainer = document.getElementById('puzzle-pieces');
+            piecesContainer.innerHTML = '';
+            
+            // Create piece positions
+            const positions = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+            shuffleArray(positions);
+            
+            positions.forEach((pos, i) => {
+                const piece = document.createElement('div');
+                piece.className = 'puzzle-piece';
+                piece.dataset.correctPosition = pos;
+                piece.dataset.pieceId = i;
+                
+                // Create image piece from robot
+                const img = document.createElement('div');
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.backgroundImage = 'url(2026-01-31_16h07_08.png)';
+                img.style.backgroundSize = '300%';
+                
+                const col = pos % 3;
+                const row = Math.floor(pos / 3);
+                img.style.backgroundPosition = `${col * 50}% ${row * 50}%`;
+                
+                piece.appendChild(img);
+                piece.addEventListener('click', () => selectPiece(piece));
+                
+                piecesContainer.appendChild(piece);
+                puzzlePieces.push(piece);
+            });
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function selectPiece(piece) {
+            if (piece.classList.contains('placed')) return;
+            
+            puzzlePieces.forEach(p => p.classList.remove('selected'));
+            piece.classList.add('selected');
+            selectedPiece = piece;
+            audioManager.playDetection();
+        }
+
+        function placePiece(slotIndex) {
+            if (!selectedPiece) {
+                voiceAssistant.speak("Sélectionne d'abord une pièce !");
+                return;
+            }
+            
+            const slot = puzzleSlots[slotIndex];
+            if (slot.classList.contains('filled')) {
+                voiceAssistant.speak("Cette case est déjà remplie !");
+                return;
+            }
+            
+            const correctPos = parseInt(selectedPiece.dataset.correctPosition);
+            
+            if (correctPos === slotIndex) {
+                // Correct placement!
+                slot.classList.add('filled');
+                slot.innerHTML = '';
+                
+                const img = document.createElement('div');
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.backgroundImage = 'url(2026-01-31_16h07_08.png)';
+                img.style.backgroundSize = '300%';
+                img.style.borderRadius = '8px';
+                
+                const col = slotIndex % 3;
+                const row = Math.floor(slotIndex / 3);
+                img.style.backgroundPosition = `${col * 50}% ${row * 50}%`;
+                
+                slot.appendChild(img);
+                
+                selectedPiece.classList.add('placed');
+                selectedPiece.classList.remove('selected');
+                selectedPiece = null;
+                
+                placedPieces++;
+                
+                // Calculate bonus based on time remaining
+                const timeBonus = Math.floor(timeRemaining / 10);
+                const points = 100 + timeBonus;
+                puzzleScore += points;
+                
+                updatePuzzleDisplay();
+                audioManager.playSuccess();
+                
+                const encouragements = [
+                    `Bravo ${playerName} !`,
+                    "Excellent !",
+                    "Super !",
+                    "Génial !",
+                    "Parfait !",
+                    "Tu gères !"
+                ];
+                voiceAssistant.speak(encouragements[Math.floor(Math.random() * encouragements.length)], false);
+                
+                // Check for victory
+                if (placedPieces === 9) {
+                    puzzleVictory();
+                }
+            } else {
+                // Wrong placement
+                audioManager.playWarning();
+                puzzleScore = Math.max(0, puzzleScore - 20);
+                updatePuzzleDisplay();
+                voiceAssistant.speak("Essaie une autre case !", false);
+                
+                // Highlight effect
+                slot.classList.add('highlight');
+                setTimeout(() => slot.classList.remove('highlight'), 500);
+            }
+        }
+
+        let hoverTimer = null;
+        let hoveredElement = null;
+
+        function onPuzzleResults(results) {
+            const indicator = document.getElementById('puzzle-hand-indicator');
+            
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                const landmarks = results.multiHandLandmarks[0];
+                const indexTip = landmarks[8];
+                
+                const x = (1 - indexTip.x) * window.innerWidth;
+                const y = indexTip.y * window.innerHeight;
+                
+                indicator.classList.add('visible');
+                indicator.style.left = x + 'px';
+                indicator.style.top = y + 'px';
+                
+                // Check what's under the hand
+                const elements = document.elementsFromPoint(x, y);
+                
+                let foundPiece = null;
+                let foundSlot = null;
+                
+                for (const el of elements) {
+                    if (el.classList.contains('puzzle-piece') && !el.classList.contains('placed')) {
+                        foundPiece = el;
+                        break;
+                    }
+                    if (el.classList.contains('puzzle-slot') && !el.classList.contains('filled')) {
+                        foundSlot = el;
+                    }
+                }
+                
+                const currentElement = foundPiece || foundSlot;
+                
+                if (currentElement) {
+                    if (hoveredElement !== currentElement) {
+                        hoveredElement = currentElement;
+                        if (hoverTimer) clearTimeout(hoverTimer);
+                        
+                        audioManager.playDetection();
+                        
+                        hoverTimer = setTimeout(() => {
+                            if (foundPiece) {
+                                selectPiece(foundPiece);
+                            } else if (foundSlot && selectedPiece) {
+                                placePiece(parseInt(foundSlot.dataset.index));
+                            }
+                        }, 1000); // 1 second hold
+                    }
+                } else {
+                    if (hoverTimer) clearTimeout(hoverTimer);
+                    hoveredElement = null;
+                }
+            } else {
+                indicator.classList.remove('visible');
+                if (hoverTimer) clearTimeout(hoverTimer);
+                hoveredElement = null;
+            }
+        }
+
+        function startPuzzleTimer() {
+            puzzleTimer = setInterval(() => {
+                timeRemaining--;
+                updatePuzzleDisplay();
+                
+                const timerEl = document.getElementById('puzzle-timer');
+                
+                if (timeRemaining <= 30) {
+                    timerEl.classList.add('danger');
+                    timerEl.classList.remove('warning');
+                } else if (timeRemaining <= 60) {
+                    timerEl.classList.add('warning');
+                }
+                
+                if (timeRemaining === 60) {
+                    voiceAssistant.speak("Plus qu'une minute !");
+                } else if (timeRemaining === 30) {
+                    voiceAssistant.speak("30 secondes !");
+                } else if (timeRemaining === 10) {
+                    voiceAssistant.speak("10 secondes !");
+                }
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(puzzleTimer);
+                    puzzleGameOver();
+                }
+            }, 1000);
+        }
+
+        function updatePuzzleDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('puzzle-timer').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('puzzle-score').textContent = puzzleScore;
+            document.getElementById('puzzle-pieces-count').textContent = `${placedPieces}/9`;
+        }
+
+        function puzzleVictory() {
+            clearInterval(puzzleTimer);
+            puzzleActive = false;
+            
+            // Bonus for remaining time
+            const timeBonus = timeRemaining * 5;
+            puzzleScore += timeBonus;
+            
+            audioManager.playVictory();
+            setTimeout(() => audioManager.playApplause(), 500);
+            
+            // Show victory screen
+            const victoryOverlay = document.getElementById('victory-overlay');
+            victoryOverlay.classList.add('active');
+            
+            document.getElementById('victory-message').textContent = 
+                `Félicitations ${playerName} ! Tu as reconstruit Robot JQ !`;
+            document.getElementById('victory-score').textContent = 
+                `Score final: ${puzzleScore} points`;
+            
+            voiceAssistant.speak(`Bravo ${playerName} ! Tu es incroyable ! Tu as reconstruit mon image en moins de 3 minutes ! Tu as gagné ${puzzleScore} points ! Je suis tellement fier de toi !`);
+            
+            // Create confetti
+            createConfetti();
+        }
+
+        function puzzleGameOver() {
+            puzzleActive = false;
+            audioManager.playGameOver();
+            
+            const victoryOverlay = document.getElementById('victory-overlay');
+            victoryOverlay.classList.add('active');
+            
+            document.getElementById('victory-message').textContent = 
+                `Temps écoulé ${playerName} ! Tu as placé ${placedPieces}/9 pièces.`;
+            document.getElementById('victory-score').textContent = 
+                `Score: ${puzzleScore} points`;
+            
+            voiceAssistant.speak(`Le temps est écoulé ${playerName} ! Tu as placé ${placedPieces} pièces sur 9. C'est un bon début ! Tu veux réessayer ?`);
+        }
+
+        function createConfetti() {
+            const colors = ['#ff3366', '#ffcc00', '#00ff88', '#00d4ff', '#8844ff', '#ff66cc'];
+            
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.height = confetti.style.width;
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 30);
+            }
+        }
+
+        function exitPuzzleMode() {
+            puzzleActive = false;
+            if (puzzleTimer) clearInterval(puzzleTimer);
+            if (puzzleCamera) puzzleCamera.stop();
+            
+            const video = document.getElementById('puzzle-webcam');
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+            
+            document.getElementById('puzzle-interface').classList.remove('active');
+            document.getElementById('victory-overlay').classList.remove('active');
+            document.getElementById('puzzle-hand-indicator').classList.remove('visible');
+            
+            demoModal.classList.add('active');
+            voiceAssistant.speak(`Tu veux essayer une autre activité ${playerName} ?`);
+            
+            currentMode = null;
+        }
+
+        // Puzzle controls
+        document.getElementById('restart-puzzle').addEventListener('click', () => {
+            if (puzzleTimer) clearInterval(puzzleTimer);
+            initPuzzle();
+            startPuzzleTimer();
+            voiceAssistant.speak("C'est reparti ! Bonne chance !");
+        });
+
+        document.getElementById('exit-puzzle').addEventListener('click', exitPuzzleMode);
+
+        document.getElementById('victory-replay').addEventListener('click', () => {
+            document.getElementById('victory-overlay').classList.remove('active');
+            initPuzzle();
+            puzzleActive = true;
+            startPuzzleTimer();
+            voiceAssistant.speak("Nouvelle partie ! Montre-moi ce que tu sais faire !");
+        });
+
+        document.getElementById('victory-exit').addEventListener('click', exitPuzzleMode);
+
+        // ============================================
+        // Form Handling
+        // ============================================
+        const form = document.getElementById('murTactileSubscriptionForm');
+        const formMessage = document.getElementById('form-message');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                if (field.type === 'radio') {
+                    const radioGroup = form.querySelectorAll(`input[name="${field.name}"]`);
+                    const checked = Array.from(radioGroup).some(r => r.checked);
+                    if (!checked) isValid = false;
+                } else if (field.type === 'checkbox') {
+                    if (!field.checked) isValid = false;
+                } else if (!field.value.trim()) {
+                    isValid = false;
+                }
+            });
+
+            const ageChecks = form.querySelectorAll('input[name="age_children"]:checked');
+            if (ageChecks.length === 0) isValid = false;
+
+            if (!isValid) {
+                formMessage.textContent = "Merci de vérifier les champs obligatoires.";
+                formMessage.className = 'form-message error';
+                voiceAssistant.speak("Il manque des informations. Veuillez remplir tous les champs obligatoires.");
+                return;
+            }
+
+            const formData = new FormData(form);
+            const data = {
+                timestamp: new Date().toISOString(),
+                profil: formData.get('profil'),
+                contact_name: formData.get('contact_name'),
+                email: formData.get('email'),
+                telephone: formData.get('telephone'),
+                ville: formData.get('ville'),
+                age_children: formData.getAll('age_children'),
+                themes_interet: formData.getAll('themes_interet'),
+                mode_utilisation: formData.getAll('mode_utilisation'),
+                subscription_plan: formData.get('subscription_plan'),
+                webcam_accept: formData.get('webcam_accept') ? true : false,
+                message: formData.get('message')
+            };
+
+            let subscriptions = JSON.parse(localStorage.getItem('murTactileSubscriptions') || '[]');
+            subscriptions.push(data);
+            localStorage.setItem('murTactileSubscriptions', JSON.stringify(subscriptions));
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `murtactile_subscription_${Date.now()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            formMessage.textContent = "Merci ! Votre demande MurTactile a été enregistrée. L'équipe vous recontactera bientôt.";
+            formMessage.className = 'form-message success';
+
+            voiceAssistant.speak("Merci pour votre inscription ! L'équipe de Jonas Browser High-Tech vous recontactera très prochainement.");
+
+            form.reset();
+        });
+
+        // ============================================
+        // Console Credits
+        // ============================================
+        console.log('%c🤖 MurTactile v2 - Concept développé par GAUTIER HAYET', 'color: #00d4ff; font-size: 16px; font-weight: bold;');
+        console.log('%c📍 SARL Jonas Browser High-Tech - Pionnier de l\'Intelligence Artificielle', 'color: #00ff88; font-size: 12px;');
+        console.log('%c🎮 Démo interactive : Tableau de Dessin + Puzzle Robot JQ', 'color: #ffcc00; font-size: 12px;');
+    </script>
+</body>
+</html>
